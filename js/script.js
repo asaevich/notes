@@ -85,6 +85,15 @@ document.querySelectorAll('.note').forEach(note => note.addEventListener('click'
             .put(notes[note.dataset.id])
 
         // если целью клика является элемент с классом "delete" (кнопка удаления заметки)
+    }else if (event.target.classList.contains('delete')) {
+        // вызываем соответствующую функцию со значением идентификатора заметки в качестве параметра
+        // обратите внимание, что нам необходимо преобразовать id в число
+        deleteNote(+note.dataset.id)
+
+        // если целью клика является элемент с классом "info" (кнопка отображения даты напоминания)
+    } else if (event.target.classList.contains('info')) {
+        // добавляем/удаляем у предыдущего элемента (дата напоминания) класс "show", отвечающий за отображение
+        event.target.previousElementSibling.classList.toggle('show')
     }
 }))
 
