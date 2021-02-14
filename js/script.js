@@ -36,4 +36,30 @@ const addNote = async () => {
     // присваиваем этой переменной null или значение соответствующего поля
     let date
     dateInput.value === '' ? date = null : date = dateInput.value
+
+    // заметка представляет собой объект
+    let note = {
+        id: id,
+        text: text,
+        // дата создания
+        createdDate: new Date().toLocaleDateString(),
+        // индикатор выполнения
+        completed: '',
+        // дата напоминания
+        notifyDate: date
+    }
+
+    // пробуем записать данные в хранилище
+    try {
+        await db.transaction('notes', 'readwrite')
+            .objectStore('notes')
+            .add(note)
+        // формируем список
+        await createList()
+            // обнуляем значения полей
+            .then(() => {
+                textarea.value = ''
+                dateInput.value = ''
+            })
+    } catch { }
 }
