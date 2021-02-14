@@ -90,7 +90,38 @@ const createList = async () => {
 
         // итерация по массиву
         notes.map(note => {
+            // добавляем заметки в список
+            list.insertAdjacentHTML('beforeend',
+                // добавляем заметке атрибут "data-id"
+                `<div class = "note" data-id="${note.id}">
+            // дата уведомления
+            <span class="notify ${note.notifyDate}">${note.notifyDate}</span>
+            // значок (кнопка) отображения уведомления
+            // обратите внимание, что в качестве дополнительного класса
+            // мы добавляем тексту и значку уведомления дату напоминания
+            // если дата не указана
+            // текст и значок уведомления не отображаются (CSS: .info.null, .notify.null)
+            <span class="info ${note.notifyDate}">?</span>
 
+            // значок (кнопка) выполнения задачи
+            <span class="complete">V</span>
+            // в качестве класса к тексту заметки добавляется индикатор выполнения
+            <p class="${note.completed}">Text: ${note.text}, <br> created: ${note.createdDate}</p>
+            // значок (кнопка) удаления заметки
+            <span class="delete">X</span>
+        </div>`)
+            // заполняем массив с датами напоминаний
+            // если дата не указана
+            if (note.notifyDate === null) {
+                return
+                // если дата указана
+            } else {
+                // массив объектов
+                dates.push({
+                    id: note.id,
+                    date: note.notifyDate.replace(/(\d+)-(\d+)-(\d+)/, '$3.$2.$1')
+                })
+            }
         })
         // если в базе не имеется данных
     } else {
