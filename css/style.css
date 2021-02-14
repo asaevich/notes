@@ -82,3 +82,70 @@ textarea:focus,
 input:focus {
     outline: none;
 }
+
+.note {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    font-style: italic;
+    user-select: none;
+    word-break: break-all;
+    position: relative;
+}
+
+.note p {
+    width: 240px;
+    font-size: 1em;
+}
+
+.note span {
+    display: block;
+    cursor: pointer;
+    font-weight: bold;
+    font-style: normal;
+}
+
+.info {
+    color: blue;
+}
+
+.notify {
+    color: #ddd;
+    font-size: .9em;
+    font-weight: normal !important;
+    text-align: center;
+    line-height: 25px;
+    border-radius: 5px;
+    width: 130px;
+    height: 25px;
+    position: absolute;
+    top: -10px;
+    left: -65px;
+    background: rgba(0, 0, 0, .6);
+    transition: .2s;
+    opacity: 0;
+}
+
+.show {
+    opacity: 1;
+}
+
+.info.null,
+.notify.null {
+    display: none;
+}
+
+.complete {
+    padding: 0 .4em;
+    color: green;
+}
+
+.delete {
+    padding-left: .4em;
+    color: red;
+}
+
+.line-through {
+    text-decoration: line-through;
+}
