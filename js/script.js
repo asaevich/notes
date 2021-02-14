@@ -79,7 +79,6 @@ document.querySelectorAll('.note').forEach(note => note.addEventListener('click'
             ? notes[note.dataset.id].completed = 'line-through'
             : notes[note.dataset.id].completed = ''
 
-        // перезаписываем заметку в хранилище
         db.transaction('notes', 'readwrite')
             .objectStore('notes')
             .put(notes[note.dataset.id])
@@ -99,3 +98,11 @@ document.querySelectorAll('.note').forEach(note => note.addEventListener('click'
 
 // запускаем проверку напоминаний
 checkDeadline(dates)
+
+const deleteNote = async key => {
+    // открываем транзакцию и удаляем заметку по ключу (идентификатор)
+    await db.transaction('notes', 'readwrite')
+        .objectStore('notes')
+        .delete(key)
+    await createList()
+}
