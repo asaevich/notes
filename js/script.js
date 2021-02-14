@@ -132,3 +132,46 @@ const createList = async () => {
         list.insertAdjacentHTML('beforeend', '<p class="note">empty</p>')
     }
 }
+
+// находим все заметки и добавляем к каждой обработчик события "клик"
+// мы делаем это внутри функции формирования списка
+// поскольку наш список при добавлении/удалении заметки формируется заново
+document.querySelectorAll('.note').forEach(note => note.addEventListener('click', event => {
+    // если целью клика является элемент с классом "complete" (кнопка выполнения задачи)
+    if (event.target.classList.contains('complete')) {
+        // добавляем/удаляем у следующего элемента (текст заметки) класс "line-through", отвечающий за зачеркивание текста
+        event.target.nextElementSibling.classList.toggle('line-through')
+
+        // меняем значение индикатора выполнения заметки
+        // в зависимости от наличия класса "complete"
+        note.querySelector('p').classList.contains('line-through')
+            ? notes[note.dataset.id].completed = 'line-through'
+            : notes[note.dataset.id].completed = ''
+
+        db.transaction('notes', 'readwrite')
+            .objectStore('notes')
+            .put(notes[note.dataset.id])
+
+        // если целью клика является элемент с классом "delete" (кнопка удаления заметки)
+    }else if (event.target.classList.contains('delete')) {
+        // вызываем соответствующую функцию со значением идентификатора заметки в качестве параметра
+        // обратите внимание, что нам необходимо преобразовать id в число
+        deleteNote(+note.dataset.id)
+
+        // если целью клика является элемент с классом "info" (кнопка отображения даты напоминания)
+    } else if (event.target.classList.contains('info')) {
+        // добавляем/удаляем у предыдущего элемента (дата напоминания) класс "show", отвечающий за отображение
+        event.target.previousElementSibling.classList.toggle('show')
+    }
+}))
+
+// запускаем проверку напоминаний
+checkDeadline(dates)
+
+const deleteNote = async key => {
+    // открываем транзакцию и удаляем заметку по ключу (идентификатор)
+    await db.transaction('notes', 'readwrite')
+        .objectStore('notes')
+        .delete(key)
+    await createList()
+}
