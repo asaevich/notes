@@ -63,3 +63,30 @@ const addNote = async () => {
             })
     } catch { }
 }
+
+// находим все заметки и добавляем к каждой обработчик события "клик"
+// мы делаем это внутри функции формирования списка
+// поскольку наш список при добавлении/удалении заметки формируется заново
+document.querySelectorAll('.note').forEach(note => note.addEventListener('click', event => {
+    // если целью клика является элемент с классом "complete" (кнопка выполнения задачи)
+    if (event.target.classList.contains('complete')) {
+        // добавляем/удаляем у следующего элемента (текст заметки) класс "line-through", отвечающий за зачеркивание текста
+        event.target.nextElementSibling.classList.toggle('line-through')
+
+        // меняем значение индикатора выполнения заметки
+        // в зависимости от наличия класса "complete"
+        note.querySelector('p').classList.contains('line-through')
+            ? notes[note.dataset.id].completed = 'line-through'
+            : notes[note.dataset.id].completed = ''
+
+        // перезаписываем заметку в хранилище
+        db.transaction('notes', 'readwrite')
+            .objectStore('notes')
+            .put(notes[note.dataset.id])
+
+        // если целью клика является элемент с классом "delete" (кнопка удаления заметки)
+    }
+}))
+
+// запускаем проверку напоминаний
+checkDeadline(dates)
