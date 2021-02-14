@@ -63,3 +63,41 @@ const addNote = async () => {
             })
     } catch { }
 }
+
+let id
+
+const createList = async () => {
+    // добавляем заголовок
+    // дату формируем с помощью API интернационализации
+    list.innerHTML = `<h3>Today is ${new Intl.DateTimeFormat('en', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    }).format()}</h3>`
+
+    // получаем заметки из базы данных
+    let notes = await db.transaction('notes')
+        .objectStore('notes')
+        .getAll()
+
+    // массив для дат напоминаний
+    let dates = []
+
+    // если в базе имеются данные
+    if (notes.length) {
+        // присваиваем переменной "id" номер последней заметки
+        id = notes.length
+
+        // итерация по массиву
+        notes.map(note => {
+
+        })
+        // если в базе не имеется данных
+    } else {
+        // присваиваем переменной "id" значение 0
+        id = 0
+
+        // выводим в список текст об отсутствии заметок
+        list.insertAdjacentHTML('beforeend', '<p class="note">empty</p>')
+    }
+}
