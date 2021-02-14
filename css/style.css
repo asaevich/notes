@@ -1,0 +1,35 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    background: radial-gradient(circle, skyblue, steelblue);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Stylish', sans-serif;
+    font-size: 1.2em;
+}
+
+.box,
+.list {
+    margin: 0 .4em;
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(lightyellow, darkorange);
+    border-radius: 5px;
+    padding: .6em;
+    box-shadow: 0 0 4px rgba(0, 0, 0, .6)
+}
+
+img {
+    padding: .4em;
+    width: 100%;
+}
