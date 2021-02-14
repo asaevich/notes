@@ -29,7 +29,7 @@ const addNote = async () => {
     if (textarea.value === '') return
 
     // получаем значение этого поля
-    let noteValue = textarea.value
+    let value = textarea.value
 
     // объявляем переменную для даты напоминания
     // с помощью тернарного оператора
@@ -40,7 +40,7 @@ const addNote = async () => {
     // заметка представляет собой объект
     let note = {
         id: id,
-        text: noteValue,
+        text: value,
         // дата создания
         createdDate: new Date().toLocaleDateString(),
         // индикатор выполнения
