@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter version="5.1"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    xmlns:svg="http://www.w3.org/2000/svg"
+    xmlns:m="http://www.w3.org/1998/Math/MathML"
+    xmlns:html="http://www.w3.org/1999/xhtml">
+    <info>
+        <title>Руководство программиста</title>
+    </info>
+    <section>
+        <info>
+            <title>Описание продукта</title>
+        </info>
+        <para>
+        Пользователь имеет возможность создавать заметки, указывая текст заметки и дату ее создания.
+        </para>
+        <para>
+        После создания заметка сохраняется в локальном хранилище и отображается в списке заметок.
+        </para>
+        <example>
+            <title>За добавление заметки отвечает следующий код:</title>
+            <programlisting language="js">
+            <![CDATA[
+                const addNote = async () => {
+    if (textarea.value === '') return
+
+    let text = textarea.value
+
+    let date
+    dateInput.value === '' ? date = null : date = dateInput.value
+
+    let note = {
+        id: id,
+        text: text,
+        createdDate: new Date().toLocaleDateString(),
+        isCompleted: '',
+        notifyDate: date
+    }
+
+    try {
+        await db.transaction('notes', 'readwrite')
+            .objectStore('notes')
+            .add(note)
+        await createList()
+            .then(() => {
+                textarea.value = ''
+                dateInput.value = ''
+            })
+    } catch {
+        alert("zalupa")
+     }
+}
+]]>
+            </programlisting>
+        </example>
+        <example>
+            <title>Когда заметка добавлена, она отображается в списке заметок, за что отвечает следующий код:</title>
+            <programlisting language="js">
+            <![CDATA[
+                      const createList = async () => {
+    list.innerHTML = `<h3>Today is ${new Intl.DateTimeFormat('en', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    }).format()}</h3>`
+
+    let notes = await db.transaction('notes')
+        .objectStore('notes')
+        .getAll()
+
+    let dates = []
+
+    if (notes.length) {
+        id = notes.length
+
+        notes.map(note => {
+            list.insertAdjacentHTML('beforeend',
+                `<div class = "note" data-id="${note.id}">
+            
+            <span class="notify ${note.notifyDate}">${note.notifyDate}</span>
+           
+            <span class="info ${note.notifyDate}">?</span>
+
+            
+            <span class="complete">V</span>
+            
+            <p class="${note.completed}">Text: ${note.text}, <br> created: ${note.createdDate}</p>
+            
+            <span class="delete">X</span>
+        </div>`)
+            if (note.notifyDate === null) {
+                return
+            } else {
+                dates.push({
+                    id: note.id,
+                    date: note.notifyDate.replace(/(\d+)-(\d+)-(\d+)/, '$3.$2.$1')
+                })
+            }
+        })
+    } else {
+        id = 0
+
+        list.insertAdjacentHTML('beforeend', '<p class="note">empty</p>')
+    }
+}
+]]>
+            </programlisting>
+        </example>
+        <example>
+            <title>Также заметку можно удалить. За это отвечает следюущий код:</title>
+            <programlisting language="js">
+            <![CDATA[
+            const deleteNote = async key => {
+    await db.transaction('notes', 'readwrite')
+        .objectStore('notes')
+        .delete(key)
+    await createList()
+}
+]]>
+            </programlisting>
+        </example>
+    </section>
+</chapter>

@@ -1,29 +1,17 @@
-let textarea = document.querySelector('textarea')
-let dateInput = document.querySelector('input[type="date"]')
+let textarea = document.querySelector('textarea');
+let dateInput = document.querySelector('input[type="date"]');
 
 let list = document.createElement('div')
 list.classList.add('list')
 document.body.appendChild(list)
 
-let db;
-// IIFE
-(async () => {
-    // создаем базу данных
-    // название, версия...
-    db = await idb.openDb('db', 1, db => {
-        // создаем хранилище
-        db.createObjectStore('notes', {
-            keyPath: 'id'
-        })
-    })
 
-    // формируем список
-    createList()
-})();
 
-// добавляем к кнопке для добавления заметки обработчик события "клик"
-document.querySelector('.add-btn').onclick = addNote
-
+/**
+ * @function addNote - Функция создания заметки
+ * Заметка представляет собой объект, формируемый на основе введенных пользователем данных.
+ * После формирования заметки, она сохраняется в хранилище и добавляется в список заметок.
+ */
 const addNote = async () => {
     // если поле для ввода текста пустое, ничего не делаем
     if (textarea.value === '') return
@@ -58,11 +46,20 @@ const addNote = async () => {
                 textarea.value = ''
                 dateInput.value = ''
             })
-    } catch { }
+    } catch {
+        alert("zalupa")
+     }
 }
 
+// добавляем к кнопке для добавления заметки обработчик события "клик"
+document.querySelector('.add-btn').onclick = addNote
 let id
 
+/**
+ * @function createList - Функция создания списка заметок
+ * Формирует список заметок на основании данных из хранилища, после чего выводит список на странице.
+ * Если же заметок нет, то выводится соответствующее сообщение.
+ */
 const createList = async () => {
     // добавляем заголовок
     // дату формируем с помощью API интернационализации
@@ -91,20 +88,16 @@ const createList = async () => {
             list.insertAdjacentHTML('beforeend',
                 // добавляем заметке атрибут "data-id"
                 `<div class = "note" data-id="${note.id}">
-            // дата уведомления
+            
             <span class="notify ${note.notifyDate}">${note.notifyDate}</span>
-            // значок (кнопка) отображения уведомления
-            // обратите внимание, что в качестве дополнительного класса
-            // мы добавляем тексту и значку уведомления дату напоминания
-            // если дата не указана
-            // текст и значок уведомления не отображаются (CSS: .info.null, .notify.null)
+           
             <span class="info ${note.notifyDate}">?</span>
 
-            // значок (кнопка) выполнения задачи
+            
             <span class="complete">V</span>
-            // в качестве класса к тексту заметки добавляется индикатор выполнения
+            
             <p class="${note.completed}">Text: ${note.text}, <br> created: ${note.createdDate}</p>
-            // значок (кнопка) удаления заметки
+            
             <span class="delete">X</span>
         </div>`)
             // заполняем массив с датами напоминаний
@@ -162,9 +155,11 @@ document.querySelectorAll('.note').forEach(note => note.addEventListener('click'
     }
 }))
 
-// запускаем проверку напоминаний
-checkDeadline(dates)
 
+/** 
+ * @function deleteNote - Функция удаления заметки
+ * @param {integer} key - Идентификатор заметки в хранилище 
+ */
 const deleteNote = async key => {
     // открываем транзакцию и удаляем заметку по ключу (идентификатор)
     await db.transaction('notes', 'readwrite')
@@ -172,3 +167,19 @@ const deleteNote = async key => {
         .delete(key)
     await createList()
 }
+
+let db;
+// IIFE
+(async () => {
+    // создаем базу данных
+    // название, версия...
+    db = await idb.openDb('db', 1, db => {
+        // создаем хранилище
+        db.createObjectStore('notes', {
+            keyPath: 'id'
+        })
+    })
+
+    // формируем список
+    createList()
+})();
